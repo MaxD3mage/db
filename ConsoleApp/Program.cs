@@ -1,21 +1,29 @@
 using System;
 using System.Linq;
 using Game.Domain;
+using MongoDB.Driver;
+using Tests;
 
 namespace ConsoleApp
 {
     class Program
     {
-        private readonly IUserRepository userRepo;
-        private readonly IGameRepository gameRepo;
+        private readonly MongoUserRepository userRepo;
+        private readonly MongoGameRepository gameRepo;
         private readonly Random random = new Random();
 
+        [Obsolete("Obsolete")]
         private Program(string[] args)
         {
-            userRepo = new InMemoryUserRepository();
-            gameRepo = new InMemoryGameRepository();
+            var connection = Environment.GetEnvironmentVariable("PROJECT5100_MONGO_CONNECTION_STRING")
+                                        ?? "mongodb://localhost:27017";
+            var client = new MongoClient(connection);
+            var db = client.GetDatabase("game-tests");
+            userRepo = new MongoUserRepository(db);
+            gameRepo = new MongoGameRepository(db);
         }
 
+        [Obsolete("Obsolete")]
         public static void Main(string[] args)
         {
             new Program(args).RunMenuLoop();

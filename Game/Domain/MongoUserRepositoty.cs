@@ -60,9 +60,7 @@ namespace Game.Domain
 
         public void Update(UserEntity user)
         {
-            var filter = new BsonDocument();
-            var update = new BsonDocument("$set", user.ToBsonDocument());
-            userCollection.UpdateOne(filter, update);
+            userCollection.FindOneAndReplace(u => u.Id == user.Id, user);
         }
 
         public void Delete(Guid id)
